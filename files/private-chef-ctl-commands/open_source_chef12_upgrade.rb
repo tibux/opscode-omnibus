@@ -468,7 +468,7 @@ private
     end
   end
 
-  def write_node_permissiosn_file(node_name)
+  def write_node_permissions_file(node_name)
     ::File.open("#{org_dir}/acls/nodes/#{node_name}.json", "w") do |f|
       f.write <<EOF
   "create": {
