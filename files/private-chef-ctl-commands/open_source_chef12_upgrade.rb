@@ -106,6 +106,8 @@ public
 
     user_names, admin_users = transform_chef11_user_data(chef11_data_dir, chef12_data_dir)
 
+    create_node_permissions(org_dir)
+
     create_invitations_json(org_dir)
 
     create_members_json(user_names, org_dir)
@@ -451,6 +453,78 @@ private
   def create_billing_admins(users, groups_dir)
     billing_admins_json = { "name" => "billing-admins", "users" => users }
     file_open("#{groups_dir}/billing-admins.json", "w"){ |file| file.write(Chef::JSONCompat.to_json_pretty(billing_admins_json)) }
+  end
+
+  def create_node_permissions(org_dir)
+    # Create a default permissions document for every node
+    # that has a client of the same name.
+    Dir.glob("#{org_dir}/nodes/*.json").each do |node_file|
+      node_name = ::File.basename(node_file).gsub(/.json$/, "")
+      if ::File.exists?("#{org_dir}/clients/#{node_name}.json")
+        write_node_permissions_file(node_name)
+      else
+        log "Node #{node_name} has no related client, not creating permissions document."
+      end
+    end
+  end
+
+  def write_node_permissiosn_file(node_name)
+    ::File.open("#{org_dir}/acls/nodes/#{node_name}.json", "w") do |f|
+      f.write <<EOF
+  "create": {
+    "actors": [
+      "#{node_name}",
+      "pivotal"
+    ],
+    "groups": [
+      "users",
+      "clients",
+      "admins"
+    ]
+  },
+  "read": {
+    "actors": [
+      "#{node_name}",
+      "pivotal"
+    ],
+    "groups": [
+      "users",
+      "clients",
+      "admins"
+    ]
+  },
+  "update": {
+    "actors": [
+      "#{node_name}",
+      "pivotal"
+    ],
+    "groups": [
+      "users",
+      "admins"
+    ]
+  },
+  "delete": {
+    "actors": [
+      "#{node_name}",
+      "pivotal"
+    ],
+    "groups": [
+      "users",
+      "admins"
+    ]
+  },
+  "grant": {
+    "actors": [
+      "#{node_name}",
+      "pivotal"
+    ],
+    "groups": [
+      "admins"
+    ]
+  }
+}
+EOF
+    end
   end
 
   def write_knife_ec_backup_config
