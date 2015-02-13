@@ -15,6 +15,7 @@
 * Update rabbitmq cookbook to be compatible with modern chef-client.
 * Update pivotal and knife-ec-backup knife configs to be compatible with modern chef-client.
 * Use chef-client -z instead of chef-solo in the server.
+* Remove install message from postinst package script
 
 ### oc\_erchef 1.4.0
 * keys API: new GET support for `/users/$user/keys` and `/organizations/$org/clients/$client/keys`
