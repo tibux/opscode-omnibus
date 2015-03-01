@@ -18,7 +18,7 @@ name "oc_erchef"
 
 default_version "1.6.0"
 
-source git: "git@github.com:opscode/oc_erchef"
+source git: "http://github.com/opscode/oc_erchef"
 
 dependency "erlang"
 dependency "rebar"

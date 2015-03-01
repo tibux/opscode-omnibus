@@ -17,13 +17,18 @@
 name "opscode-chef-mover"
 default_version "2.2.20"
 
-source git: "git@github.com:opscode/chef-mover"
+source git: "http://github.com/chef/chef-mover"
 
 dependency "erlang"
 dependency "rebar"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
+
+  command 'sed -i "s;git@github.com:opscode;https:\/\/github.com/chef;g" rebar.config'
+  command 'sed -i "s;git@github.com:opscode;https:\/\/github.com/chef;g" rebar.config.lock'
+  command 'sed -i "s;git@github.com:;https:\/\/github.com/;g" rebar.config.lock'
+  command 'sed -i "s;a16918da46a39a3d0791889f61f62b1265955d8d;d16a4fd968e000b65e4678cccfad68d7a0a8bd1c;g" rebar.config.lock'
 
   make "distclean", env: env
   make "rel", env: env
